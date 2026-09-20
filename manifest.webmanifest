@@ -1,0 +1,19 @@
+{
+  "name": "Dieta in Grammi",
+  "short_name": "Dieta",
+  "description": "Calcolo delle porzioni, bilancio dei macronutrienti e scambio alimenti su una dieta di riferimento.",
+  "lang": "it",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#15564A",
+  "background_color": "#F1F3EE",
+  "categories": ["health", "food", "utilities"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

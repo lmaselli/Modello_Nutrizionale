@@ -17,6 +17,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600&display=swap">
 <style>
+[hidden]{display:none!important}
+img{max-width:100%}
 :root{
   --bg:#F1F3EE; --surface:#FBFCF9; --surface2:#E8EBE3; --sunk:#E2E6DC;
   --ink:#161F1B; --ink2:#4B5650; --ink3:#7C867E;
@@ -1273,26 +1275,37 @@ renderSwap();
 @media (display-mode: standalone){ input, select, .fname, td, th { -webkit-user-select:text; user-select:text } }
 </style>
 <script>
-/* registrazione del service worker: abilita il funzionamento offline */
+/* registrazione del service worker: abilita il funzionamento offline.
+   Il banner di aggiornamento compare solo se una versione era gia' attiva
+   prima di questo avvio: alla prima installazione non deve apparire. */
 if ('serviceWorker' in navigator) {
+  const avevaControllo = !!navigator.serviceWorker.controller;
+
+  const mostraBanner = worker => {
+    const box = document.getElementById('upd');
+    const bot = document.getElementById('updBtn');
+    if (!box || !bot) return;
+    box.hidden = false;
+    bot.onclick = () => { box.hidden = true; worker.postMessage('aggiorna'); };
+  };
+
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').then(reg => {
+      if (avevaControllo && reg.waiting) mostraBanner(reg.waiting);
       reg.addEventListener('updatefound', () => {
         const nuovo = reg.installing;
         if (!nuovo) return;
         nuovo.addEventListener('statechange', () => {
-          if (nuovo.state === 'installed' && navigator.serviceWorker.controller) {
-            const box = document.getElementById('upd');
-            if (box) box.hidden = false;
-            const b = document.getElementById('updBtn');
-            if (b) b.onclick = () => { nuovo.postMessage('aggiorna'); };
-          }
+          if (nuovo.state === 'installed' && avevaControllo) mostraBanner(nuovo);
         });
       });
     }).catch(() => {});
+
     let ricaricato = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (ricaricato) return; ricaricato = true; location.reload();
+      if (!avevaControllo || ricaricato) return;   /* nessun ricaricamento al primo avvio */
+      ricaricato = true;
+      location.reload();
     });
   });
 }

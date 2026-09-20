@@ -1,7 +1,7 @@
 /* Dieta in Grammi - service worker
    Cache-first sul guscio dell'app: dopo la prima apertura funziona senza rete.
    Per pubblicare un aggiornamento basta cambiare VERSIONE. */
-const VERSIONE = 'dieta-v9';
+const VERSIONE = 'dieta-v10';
 const GUSCIO = [
   './',
   './index.html',
@@ -16,8 +16,7 @@ self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(VERSIONE)
       .then(c => c.addAll(GUSCIO))
-      .then(() => self.skipWaiting())
-      .catch(() => self.skipWaiting())
+      .catch(() => {})
   );
 });
 
